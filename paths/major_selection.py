@@ -1,7 +1,8 @@
+import json
 import streamlit as st
 import pandas as pd
 from annotated_text import annotated_text
-from ast import literal_eval
+from streamlit_lottie import st_lottie
 
 
 class MajorSelection:
@@ -43,6 +44,8 @@ class MajorSelection:
 
     def major_selction_box_fun(self):
         st.session_state["major_selction_box_state"] = st.session_state["major_selction_box_key"]
+        if "satify_chxbox_state" in st.session_state:
+            st.session_state["satify_chxbox_state"] = False
 
     def major_selction_slider_fun(self):
         st.session_state["major_selction_number_state"] = st.session_state["major_selction_number_key"]
@@ -58,6 +61,8 @@ class MajorSelection:
 
         st.write(
             f"##### **{st.session_state['major_selction_box_state']}** major has the following requirements")
+
+        st.markdown("---")
 
         sel_maj_req_list = df["Major requirements"].loc[df["Majors"]
                                                         == st.session_state["major_selction_box_state"]].values[0]
@@ -115,7 +120,7 @@ class MajorSelection:
 
         if numb_course_required == 3:
             st.write(
-                "Additionally you must have successfully completed at least **ONE** course from the following introductory courseswith \
+                "Additionally you must have successfully completed at least **ONE** course from the following introductory courses with \
                     a minimum grade of D")
             st.dataframe(pd.DataFrame(introductory_courses_list).transpose())
         if numb_course_required == 2:
@@ -124,9 +129,88 @@ class MajorSelection:
                     a minimum grade of **D** in each course")
             st.dataframe(pd.DataFrame(introductory_courses_list).transpose())
 
+        if "satify_chxbox_state" not in st.session_state:
+            st.session_state["satify_chxbox_state"] = False
+
+        col1, col2 = st.columns([3, 1])
+
+        with col1:
+
+            st.checkbox(
+                f"Do you satisfy these course requirements to major in {st.session_state['major_selction_box_state']}",
+                value=st.session_state["satify_chxbox_state"],
+                key="satify_chxbox_key",
+                on_change=self.satify_chxbox_fun,
+                help="Tick mark this box if you have completed all required courses"
+
+                )
+        with col2:
+            lottie_coding1 = self.load_lottiefile("images\\checkmark.json")
+            st_lottie(
+            lottie_coding1,
+            height=100,
+            width=80,
+            key=None,
+        )
+        with st.expander("More information"):
+            st.write("If not sure about whether you completed course requirement or not. Visit this \
+                 [site](https://www.squ.edu.om/science/Academic-Programs/Undergraduate) for more clarification \
+            ")
+
+        st.markdown("---")
         st.write("##### 2. Required c.GPA")
 
         minimum_cgpa_major = df["Cumulative GPA requirement"].loc[df["Majors"] == st.session_state['major_selction_box_state']]
 
         st.info(f"The required cumulative GPA to specialize in \
             **{st.session_state['major_selction_box_state']}** is **{minimum_cgpa_major.values[0]:0.2f}**")
+
+        if st.session_state["major_selction_number_state"] >= minimum_cgpa_major.values[0]:
+            if st.session_state["satify_chxbox_state"]:
+                st.success(f"Congratulation. You can apply for {st.session_state['major_selction_box_state']}")
+
+                st.write(f"Please send an email to Dr/Prof. \
+                    **{df['Representative'][df['Majors'] == st.session_state['major_selction_box_state']].values[0]}**\
+                         at {df['Representative Email'][df['Majors'] == st.session_state['major_selction_box_state']].values[0]} \
+                            for further inquiries")
+                if "show balloons" in st.session_state:
+                    if st.session_state["show balloons"]:
+                        st.balloons()
+                st.session_state["show balloons"] = False
+                lottie_coding3 = self.load_lottiefile("images\\76212-student-transparent.json")
+                st_lottie(
+                lottie_coding3,
+                height=600,
+                width=600,
+                key=None,
+            )
+            else:
+                st.error(f"Unfortunately. You cannot apply to {st.session_state['major_selction_box_state']} \
+                    since you have not completed the required courses. Keep Studying!")
+                st.session_state["show balloons"] = True
+
+                lottie_coding3 = self.load_lottiefile("images\completecourses.json")
+                st_lottie(
+                lottie_coding3,
+                height=600,
+                width=600,
+                key=None,
+            )
+        else:
+            st.error(f"Unfortunately. You cannot apply to {st.session_state['major_selction_box_state']} \
+                    since your c.GPA is lower than {minimum_cgpa_major.values[0]}. Study Harder")
+            st.session_state["show balloons"] = True
+            lottie_coding2 = self.load_lottiefile("images\\studyharder.json")
+            st_lottie(
+            lottie_coding2,
+            height=600,
+            width=600,
+            key=None,
+        )
+
+    def satify_chxbox_fun(self):
+        st.session_state["satify_chxbox_state"] = st.session_state["satify_chxbox_key"]
+
+    def load_lottiefile(self, filepath: str):
+        with open(filepath, "r") as f:
+            return json.load(f)

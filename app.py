@@ -23,7 +23,7 @@ def run_query(query):
     return rows
 
 
-sheet_url = st.secrets["private_gsheets_url"]
+sheet_url = st.secrets["private_gsheets_url1"]
 rows = run_query(f'SELECT * FROM "{sheet_url}"')
 
 
@@ -57,7 +57,7 @@ class MainApp:
             options = [
                 "Major Selection",
                 "Major Choice",
-                "Major Availability",
+                "Major Vacancies",
                 "About"
             ]
             # cols = st.columns(5)
@@ -84,7 +84,7 @@ class MainApp:
             MajorSelection(self, self.df)
         elif option_menu_selc == "Major Choice":
             pass
-        elif option_menu_selc == "Major Availability":
+        elif option_menu_selc == "Major Vacancies":
             pass
         elif option_menu_selc == "About":
             pass
