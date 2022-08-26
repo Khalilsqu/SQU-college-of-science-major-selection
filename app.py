@@ -26,18 +26,33 @@ def run_query(query):
 sheet_url = st.secrets["private_gsheets_url"]
 rows = run_query(f'SELECT * FROM "{sheet_url}"')
 
-@st.cache
+
+@st.cache(allow_output_mutation=True)
 def convert_to_df():
     df = pd.DataFrame(rows)
-    df.columns = df.columns.str.replace('_',' ')
-    df["Major requirements"] = df["Major requirements"].str[1:-1].str.split(',')
-    return df
+    df.columns = df.columns.str.replace('_', ' ').str.strip()
+    df['Majors'] = df['Majors'].str.strip()
+    df["Major requirements"] = df["Major requirements"].str[1:-1].str.split(
+        ',').apply(lambda x: [i.strip() for i in x])
+
+    df["Major minimum requirement"] = df["Major minimum requirement"].str[1:-1].str.split(',').apply(
+        lambda x: dict(zip([m.split(":")[0] for m in x] , [m.split(":")[1] for m in x])))
+
+    introductory_courses = list(set(df["Major requirements"].sum()))
+
+    introductory_courses = pd.Series(introductory_courses, name="Introductory Courses")
+
+    return df, introductory_courses
+
 
 class MainApp:
 
     def __init__(self) -> None:
-        self.df = convert_to_df()
-        self.df.to_csv("khalil.csv", index=False)
+        self.df, introductory_courses = convert_to_df()
+
+        if "introductory_courses" not in st.session_state:
+            st.session_state["introductory_courses"] = introductory_courses
+
         with st.sidebar:
             options = [
                 "Major Selection",
@@ -45,9 +60,9 @@ class MainApp:
                 "Major Availability",
                 "About"
             ]
-            cols = st.columns(5)
-            with cols[2]:
-                st.image("Sultan_Qaboos_University_Logo.png", width=50)
+            # cols = st.columns(5)
+            # with cols[2]:
+            #     st.image("Sultan_Qaboos_University_Logo.png", width=50)
             option_menu_selc = option_menu(
                 menu_title="College of Science",
                 options=options,

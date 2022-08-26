@@ -154,3 +154,4 @@ cython_debug/
 .streamlit
 test.ipynb
 khalil.csv
+test.py
