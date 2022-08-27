@@ -146,7 +146,7 @@ class MajorSelection:
 
                 )
         with col2:
-            lottie_coding1 = self.parent.load_lottiefile("images\\checkmark.json")
+            lottie_coding1 = self.parent.load_lottiefile("images/checkmark.json")
             st_lottie(
             lottie_coding1,
             height=100,
@@ -178,7 +178,7 @@ class MajorSelection:
                     if st.session_state["show balloons"]:
                         st.balloons()
                 st.session_state["show balloons"] = False
-                lottie_coding3 = self.parent.load_lottiefile("images\\76212-student-transparent.json")
+                lottie_coding3 = self.parent.load_lottiefile("images/76212-student-transparent.json")
                 st_lottie(
                 lottie_coding3,
                 height=600,
@@ -190,7 +190,7 @@ class MajorSelection:
                     since you have not completed the required courses. Keep Studying!")
                 st.session_state["show balloons"] = True
 
-                lottie_coding3 = self.parent.load_lottiefile("images\completecourses.json")
+                lottie_coding3 = self.parent.load_lottiefile("images/completecourses.json")
                 st_lottie(
                 lottie_coding3,
                 height=600,
@@ -201,7 +201,7 @@ class MajorSelection:
             st.error(f"Unfortunately. You cannot apply to {st.session_state['major_selction_box_state']} \
                     since your c.GPA is lower than {minimum_cgpa_major.values[0]}. Study Harder")
             st.session_state["show balloons"] = True
-            lottie_coding2 = self.parent.load_lottiefile("images\\studyharder.json")
+            lottie_coding2 = self.parent.load_lottiefile("images/studyharder.json")
             st_lottie(
             lottie_coding2,
             height=600,
