@@ -1,12 +1,15 @@
+from operator import index
+from turtle import width
 import streamlit as st
 import plotly.graph_objects as go
 from streamlit_lottie import st_lottie
+import plotly.express as px
 
 
 config = {
     'toImageButtonOptions': {
         'format': 'svg',  # one of png, svg, jpeg, webp
-        'filename': 'autograde',
+        'filename': 'major selection',
         'height': None,
         'width': None,
         'scale': 1  # Multiply title/legend/axis/canvas sizes by this factor
@@ -36,12 +39,11 @@ class MajorVacancies:
 
         if ("major_slection_key" in st.session_state) & ("cohor_slide_state" in st.session_state):
             remaining_seat = \
-            st.session_state[
-                'major_vacancies_sheet'].loc[
+                st.session_state[
+                    'major_vacancies_sheet'].loc[
                     st.session_state['major_vacancies_sheet']["Major"] == st.session_state["major_slection_key"]
                 ][str(st.session_state["cohor_slide_state"])].values[0]
 
-            
             if remaining_seat == 0:
                 st.info(f"There is no remaining seats in\
                      **{st.session_state['major_slection_key']}**\
@@ -49,30 +51,45 @@ class MajorVacancies:
 
                 lottie_coding2 = self.parent.load_lottiefile("images/sad.json")
                 st_lottie(
-                lottie_coding2,
-                height=150,
-                width=150,
-                key=None,
-            )
+                    lottie_coding2,
+                    height=150,
+                    width=150,
+                    key=None,
+                )
                 st.write(f"Check with another major")
             else:
                 if remaining_seat == 1:
                     st.info(f"There is only **{remaining_seat}** \
-                        remaining seat in **{st.session_state['major_slection_key']}**")
+                        remaining seat in **{st.session_state['major_slection_key']}** \
+                            for cohort **{st.session_state['cohor_slide_state']}**")
                 else:
                     st.info(f"There are **{remaining_seat}** \
-                        remaining seats in **{st.session_state['major_slection_key']}**")
-                lottie_coding3 = self.parent.load_lottiefile("images/apply_major.json")
-                st.write("Go and apply. Visit assistant dean office for undergraduate studies in the college of science")
-                st_lottie(
-                lottie_coding3,
-                height=300,
-                width=300,
-                key=None,
-            )
+                        remaining seats in **{st.session_state['major_slection_key']}** \
+                            for cohort **{st.session_state['cohor_slide_state']}**")
+                lottie_coding3 = self.parent.load_lottiefile(
+                    "images/apply_major.json")
+                lottie_coding4 = self.parent.load_lottiefile(
+                    "images/apply_major2.json")
+                st.write(
+                    "Go and apply. Visit assistant dean office for undergraduate studies in the college of science")
+                cols = st.columns(2)
+                with cols[0]:
+                    st_lottie(
+                        lottie_coding4,
+                        height=300,
+                        width=300,
+                        key=None,
+                    )
+                with cols[1]:
+                    st_lottie(
+                        lottie_coding3,
+                        height=300,
+                        width=300,
+                        key=None,
+                    )
 
         st.markdown("---")
-        
+
         st.success("Data below show major vacancies")
 
         st.dataframe(st.session_state['major_vacancies_sheet'])
@@ -112,10 +129,38 @@ class MajorVacancies:
                           xaxis_title='Year',
                           yaxis_title='Vacancy number')
 
-        st.plotly_chart(fig,
-                        use_container_width=True,
-                        config=config
-                        )
+        st.plotly_chart(
+            fig,
+            use_container_width=True,
+            config=config
+        )
+        df = st.session_state['major_vacancies_sheet'].drop(
+            "Department", axis=1)
+        df = df.melt(id_vars=["Major"],
+                     var_name="Year",
+                     value_name="Seats")
+
+
+        st.write('Pie Chart of Major Vacancies')
+
+        fig = px.sunburst(
+            df,
+            path=['Year', 'Major', "Seats"],
+            width=700, height=700
+        )
+
+        fig.update_layout(
+
+            margin=dict(l=0, r=10, t=0, b=0)
+        )
+        fig.update_traces(
+            hovertemplate="%{id}"
+        )
+
+        st.plotly_chart(
+            fig,
+            config=config
+        )
 
     def cohor_slide_fun(self):
         st.session_state["cohor_slide_state"] = int(
@@ -141,11 +186,10 @@ class MajorVacancies:
                       on_change=self.cohor_slide_fun,
                       help="This is the year you joined SQU"
                       )
-            
+
             if "major_slection_state" not in st.session_state:
                 st.session_state["major_slection_state"] = st.session_state['major_vacancies_sheet']['Major'].iloc[0]
 
-            
             st.selectbox(
                 "What you want to major in",
                 options=st.session_state['major_vacancies_sheet']['Major'],
@@ -157,5 +201,3 @@ class MajorVacancies:
                 key="major_slection_key",
                 on_change=self.major_slection_fun,
             )
-
-    

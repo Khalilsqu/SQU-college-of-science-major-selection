@@ -11,7 +11,7 @@ from paths.major_vacancies import MajorVacancies
 
 st.set_page_config(
             "Major Selection",
-            page_icon="👨‍🎓",
+            page_icon="🎓",
             layout="wide",
         )
 
