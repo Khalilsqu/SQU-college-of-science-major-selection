@@ -1,9 +1,8 @@
-gsheetsdb==0.1.13.1
+streamlit==1.11.1
 pandas==1.4.3
 plotly==5.9.0
-protobuf==4.21.5
 st_annotated_text==3.0.0
-streamlit==1.11.1
 streamlit_lottie==0.0.3
 streamlit_option_menu==0.3.2
 openpyxl==3.0.9
+gsheetsdb==0.1.13
