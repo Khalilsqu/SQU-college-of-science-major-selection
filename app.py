@@ -15,6 +15,22 @@ st.set_page_config(
             layout="wide",
         )
 
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            footer:after {
+            content:'Made by Khalil Al Hooti'; 
+            visibility: visible;
+            display: block;
+            position: relative;
+            #background-color: red;
+            padding: 5px;
+            top: 2px;
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
+
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
     scopes=[
