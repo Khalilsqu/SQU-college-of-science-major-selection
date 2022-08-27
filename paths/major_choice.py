@@ -1,10 +1,12 @@
-import streamlit as st
 
-from google.oauth2 import service_account
-from gsheetsdb import connect
-import pandas as pd
+from streamlit_lottie import st_lottie
 
-
-class MajorApplication:
-    def __init__(self) -> None:
-        pass
+class MajorChoice:
+    def __init__(self, parent) -> None:
+        lottie_coding = parent.load_lottiefile("images/under-construction-1.json")
+        st_lottie(
+        lottie_coding,
+        height=600,
+        width=600,
+        key=None,
+    )

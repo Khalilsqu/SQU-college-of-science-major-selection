@@ -1,5 +1,3 @@
-from operator import index
-from turtle import width
 import streamlit as st
 import plotly.graph_objects as go
 from streamlit_lottie import st_lottie

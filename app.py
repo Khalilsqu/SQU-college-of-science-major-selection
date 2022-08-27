@@ -8,6 +8,7 @@ import pandas as pd
 
 from paths.major_selection import MajorSelection
 from paths.major_vacancies import MajorVacancies
+from paths.major_choice import MajorChoice
 
 st.set_page_config(
             "Major Selection",
@@ -101,8 +102,7 @@ class MainApp:
             options = [
                 "Major Selection",
                 "Major Choice",
-                "Major Vacancies",
-                "About"
+                "Major Vacancies"
             ]
             option_menu_selc = option_menu(
                 menu_title="College of Science",
@@ -110,8 +110,7 @@ class MainApp:
                 icons=[
                     "shuffle",
                     "diagram-3-fill",
-                    "bar-chart-line",
-                    "file-person"
+                    "bar-chart-line"
                 ],
                 menu_icon="mortarboard-fill",
                 default_index=0
@@ -124,12 +123,10 @@ class MainApp:
         if option_menu_selc == "Major Selection":
             MajorSelection(self, self.df)
         elif option_menu_selc == "Major Choice":
-            pass
+            MajorChoice(self)
         elif option_menu_selc == "Major Vacancies":
             MajorVacancies(self)
-        elif option_menu_selc == "About":
-            pass
-
+            
     def load_lottiefile(self, filepath: str):
         with open(filepath, "r") as f:
             return json.load(f)
