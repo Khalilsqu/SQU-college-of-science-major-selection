@@ -1,11 +1,19 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
+import json
 
 from google.oauth2 import service_account
 from gsheetsdb import connect
 import pandas as pd
 
 from paths.major_selection import MajorSelection
+from paths.major_vacancies import MajorVacancies
+
+st.set_page_config(
+            "Major Selection",
+            page_icon="👨‍🎓",
+            layout="wide",
+        )
 
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
@@ -17,14 +25,17 @@ conn = connect(credentials=credentials)
 
 
 @st.cache
-def run_query(query):
+def downloadingGoogleSheet(query):
     rows = conn.execute(query, headers=1)
     rows = rows.fetchall()
     return rows
 
 
 sheet_url = st.secrets["private_gsheets_url1"]
-rows = run_query(f'SELECT * FROM "{sheet_url}"')
+rows = downloadingGoogleSheet(f'SELECT * FROM "{sheet_url}"')
+
+sheet_url2 = st.secrets["private_gsheets_url2"]
+rows2 = downloadingGoogleSheet(f'SELECT * FROM "{sheet_url2}"')
 
 
 @st.cache(allow_output_mutation=True)
@@ -44,11 +55,28 @@ def convert_to_df():
 
     return df, introductory_courses
 
+@st.cache(allow_output_mutation=True)
+def convert_to_df_major_vacancies():
+    df = pd.DataFrame(rows2)
+
+    keys = df.columns[2:]
+    values = df.columns[2:].str[1:]
+    df = df.rename(
+        columns=dict(zip(keys, values))
+    )
+
+    df.columns = df.columns.str.strip()
+
+    return df
+
 
 class MainApp:
 
     def __init__(self) -> None:
+        
         self.df, introductory_courses = convert_to_df()
+        if "major_vacancies_sheet" not in st.session_state: 
+            st.session_state['major_vacancies_sheet'] = convert_to_df_major_vacancies()
 
         if "introductory_courses" not in st.session_state:
             st.session_state["introductory_courses"] = introductory_courses
@@ -60,9 +88,6 @@ class MainApp:
                 "Major Vacancies",
                 "About"
             ]
-            # cols = st.columns(5)
-            # with cols[2]:
-            #     st.image("Sultan_Qaboos_University_Logo.png", width=50)
             option_menu_selc = option_menu(
                 menu_title="College of Science",
                 options=options,
@@ -85,9 +110,13 @@ class MainApp:
         elif option_menu_selc == "Major Choice":
             pass
         elif option_menu_selc == "Major Vacancies":
-            pass
+            MajorVacancies(self)
         elif option_menu_selc == "About":
             pass
+
+    def load_lottiefile(self, filepath: str):
+        with open(filepath, "r") as f:
+            return json.load(f)
 
 
 if __name__ == "__main__":
