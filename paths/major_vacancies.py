@@ -98,14 +98,16 @@ class MajorVacancies:
             fig.add_trace(go.Scatter(
                 x=st.session_state['major_vacancies_sheet'].columns[2:],
                 y=st.session_state['major_vacancies_sheet'].iloc[row, 2:],
-                name=st.session_state['major_vacancies_sheet'].iloc[row, 1]
+                name=st.session_state['major_vacancies_sheet'].iloc[row, 1],
+                hoverlabel=dict(namelength=-1)
             )
             )
 
         fig.update_layout(title='Line Plots of Major Vacancies',
                           xaxis_title='Year',
                           yaxis_title='Vacancy number')
-
+        # fig.update_traces(mode="markers+lines", hovertemplate=None)
+        fig.update_layout(hovermode="x unified")
         st.plotly_chart(
             fig,
             use_container_width=True,
@@ -123,7 +125,8 @@ class MajorVacancies:
                     text=st.session_state['major_vacancies_sheet'].iloc[row, 2:].replace(
                         0, ""),
                     hoverinfo="x+y+name",
-                    textposition="outside"
+                    textposition="outside",
+                    hoverlabel=dict(namelength=-1)
                 )
             )
 
