@@ -108,6 +108,7 @@ class MajorVacancies:
 
         st.plotly_chart(
             fig,
+            use_container_width=True,
             config=config
         )
 
@@ -119,7 +120,8 @@ class MajorVacancies:
                 y=st.session_state['major_vacancies_sheet'].iloc[row, 2:],
                 name=st.session_state['major_vacancies_sheet'].iloc[row, 1],
                 text=st.session_state['major_vacancies_sheet'].iloc[row, 2:],
-                hoverinfo="x+y+name"
+                hoverinfo="x+y+name",
+                textposition="outside"
             )
             )
 
@@ -137,7 +139,6 @@ class MajorVacancies:
         df = df.melt(id_vars=["Major"],
                      var_name="Year",
                      value_name="Seats")
-
 
         st.write('Pie Chart of Major Vacancies')
 
@@ -157,7 +158,8 @@ class MajorVacancies:
 
         st.plotly_chart(
             fig,
-            config=config
+            config=config,
+            use_container_width=True,
         )
 
     def cohor_slide_fun(self):
