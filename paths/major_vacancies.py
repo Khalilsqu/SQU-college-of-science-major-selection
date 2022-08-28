@@ -115,14 +115,16 @@ class MajorVacancies:
         fig = go.Figure()
 
         for row in range(len(st.session_state['major_vacancies_sheet'])):
-            fig.add_trace(go.Bar(
-                x=st.session_state['major_vacancies_sheet'].columns[2:],
-                y=st.session_state['major_vacancies_sheet'].iloc[row, 2:],
-                name=st.session_state['major_vacancies_sheet'].iloc[row, 1],
-                text=st.session_state['major_vacancies_sheet'].iloc[row, 2:],
-                hoverinfo="x+y+name",
-                textposition="outside"
-            )
+            fig.add_trace(
+                go.Bar(
+                    x=st.session_state['major_vacancies_sheet'].columns[2:],
+                    y=st.session_state['major_vacancies_sheet'].iloc[row, 2:],
+                    name=st.session_state['major_vacancies_sheet'].iloc[row, 1],
+                    text=st.session_state['major_vacancies_sheet'].iloc[row, 2:].replace(
+                        0, ""),
+                    hoverinfo="x+y+name",
+                    textposition="outside"
+                )
             )
 
         fig.update_layout(title='Bar Plots of Major Vacancies',
